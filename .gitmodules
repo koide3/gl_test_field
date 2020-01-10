@@ -4,3 +4,6 @@
 [submodule "thirdparty/portable-file-dialogs"]
 	path = thirdparty/portable-file-dialogs
 	url = https://github.com/samhocevar/portable-file-dialogs.git
+[submodule "thirdparty\\Eigen"]
+	path = thirdparty\\Eigen
+	url = https://github.com/eigenteam/eigen-git-mirror.git

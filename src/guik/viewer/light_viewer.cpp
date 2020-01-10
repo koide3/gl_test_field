@@ -16,7 +16,7 @@ bool LightViewer::init(const Eigen::Vector2i& size, const char* glsl_version) {
   // GL::Renderer::setClearColor(0x474747_rgbf); // lightwave
   // GL::Renderer::setClearColor(0x3a3a3a_rgbf); // blender
 
-  std::string data_directory = ros::package::getPath("gl_test_field") + "/data";
+  std::string data_directory = "data";
   canvas.reset(new guik::GLCanvas(data_directory, size));
   if(!canvas->ready()) {
     close();

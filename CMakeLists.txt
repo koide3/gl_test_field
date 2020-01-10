@@ -4,24 +4,8 @@ project(gl_test_field)
 # add_compile_options(-std=c++11)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
-find_package(GLM REQUIRED)
 find_package(OpenGL REQUIRED)
-
-find_package(Eigen3 REQUIRED)
-find_package(PCL REQUIRED)
-find_package(Boost REQUIRED filesystem program_options)
-
-find_package(catkin REQUIRED COMPONENTS roslib)
-
-###################################
-## catkin specific configuration ##
-###################################
-catkin_package(
-  INCLUDE_DIRS include thirdparty/imgui thirdparty/gl3w
-  LIBRARIES dl glfw imgui guik ${catkin_LIBRARIES}
-#  CATKIN_DEPENDS roscpp rospy
-#  DEPENDS system_lib
-)
+# find_package(Boost REQUIRED filesystem program_options)
 
 ###########
 ## Build ##
@@ -32,22 +16,32 @@ include_directories(
   thirdparty/imgui
   thirdparty/imgui/examples
   thirdparty/portable-file-dialogs
+  thirdparty/Eigen
   thirdparty/gl3w
-  ${GLM_INCLUDE_DIRS}
-  ${Boost_INCLUDE_DIRS}
-  ${EIGEN3_INCLUDE_DIRS}
-  ${PCL_INCLUDE_DIRS}
-  ${catkin_INCLUDE_DIRS}
+  thirdparty/glm
+  thirdparty/glfw/include
+)
+
+link_directories(
+  thirdparty/glfw/lib-vc2019
 )
 
 # imgui
 add_definitions(-DIMGUI_IMPL_OPENGL_LOADER_GL3W)
 
+# Win32
+add_definitions(
+  -DNOMINMAX
+  -D_USE_MATH_DEFINES
+  -D_ENABLE_EXTENDED_ALIGNED_STORAGE
+  -D_CRT_SECURE_NO_WARNINGS
+)
+
 ###########
 ## Build ##
 ###########
 
-add_library(imgui SHARED
+add_library(imgui
   thirdparty/gl3w/gl3w.c
   thirdparty/imgui/imgui.cpp
   thirdparty/imgui/imgui_demo.cpp
@@ -58,15 +52,14 @@ add_library(imgui SHARED
 )
 target_link_libraries(imgui
   ${OPENGL_LIBRARIES}
-  glfw
-  dl
+  glfw3
 )
 
-add_library(guik SHARED
+add_library(guik
   src/glk/mesh.cpp
   src/glk/lines.cpp
   src/glk/thin_lines.cpp
-  src/glk/pointcloud_buffer.cpp
+# src/glk/pointcloud_buffer.cpp
   src/glk/glsl_shader.cpp
   src/glk/frame_buffer.cpp
   src/glk/primitives/primitives.cpp
@@ -77,9 +70,15 @@ add_library(guik SHARED
   src/guik/imgui_application.cpp
   src/guik/viewer/light_viewer.cpp
 )
-target_link_libraries(imgui
-  ${PCL_LIBRARIES}
+target_link_libraries(guik
+  ${OPENGL_LIBRARIES}
+  glfw3
+  imgui
 )
+add_dependencies(guik
+  imgui
+)
+
 
 add_executable(gl_test_field
   src/gl_test_field.cpp
@@ -87,7 +86,10 @@ add_executable(gl_test_field
 target_link_libraries(gl_test_field
   imgui
   guik
-  ${catkin_LIBRARIES}
+)
+add_dependencies(gl_test_field
+  imgui
+  guik
 )
 
 
